@@ -10,7 +10,7 @@ var casper = require('casper').create({
 var fs = require('fs');
 
 var debugcounter = new Date();
-logpath = "/logs/";
+logpath = "logs/";
 
 var skip = function() {
 	console.log('Timeou reached, Not found!');
@@ -50,7 +50,7 @@ casper.start();
 
 if (fs.exists(addr_path)) {
 	var addr_file = fs.open(addr_path, { mode: 'r'});
-	while(!addr_file.atEnd() && counter <= 20)  { // precaution for testing - not to run all addrs
+	while(!addr_file.atEnd() && counter <= 10)  { // precaution for testing - not to run all addrs
 		
 		console.log(counter);
 		
@@ -82,7 +82,7 @@ if (fs.exists(addr_path)) {
 				
 		// этажность #descriptionBlockPart > div > div > table:nth-child(1) > tbody > tr:nth-child(4) > td.tab3-td-first 
 		casper.waitForSelector('table.tab3 > tbody > tr:nth-child(4)', function get_house_data() {		
-				write({'data':  this.getHTML('table.tab3 > tbody > tr:nth-child(4)'), 'name': 'floor' + counter2 });
+				write({'data':  this.getHTML('table.tab3 > tbody > tr:nth-child(4)'), 'name': counter2, 'mode': 'a' });
 				// ”правление
 				this.click('#sidebar-r > div > div > div.tub-box > a:nth-child(4)');
 			}, skip);
@@ -94,7 +94,7 @@ if (fs.exists(addr_path)) {
 			});
 	
 		casper.waitForSelector('div.p3 > div > a.h4', function get_governor_data() {
-				write( {'data': this.getHTML('div.p3 > div > a.h4'), 'name': 'governor' + counter2 } );
+				write( {'data': this.getHTML('div.p3 > div > a.h4'), 'name': counter2 , 'mode': 'a' } );
 			}, skip);
 		
 		casper.then(function up_counter(){
