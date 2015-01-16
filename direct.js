@@ -30,8 +30,6 @@ var write = function(args) {
   
 };
 
-
-
 addr_path = 'prep_addr_uglyfied2.csv';
 
 addr = 'find=%EF%F0%EE%E5%E7%E4+%C7%E0%E3%EE%F0%FC%E5%E2%F1%EA%E8%E9+%E4.11';
@@ -82,18 +80,91 @@ if (fs.exists(addr_path)) {
 
 		casper.then(function got_to_house() {
 		//		write({'data':  this.getHTML()});	
-				this.echo(this.getCurrentUrl());
-			//	this.echo(this.getTitle());
-				house.addr = this.getTitle();
-			//	write({'data': this.getTitle(), 'name': counter2 + 'addr', 'mode': 'a'});
-				house.link = this.getCurrentUrl();
-			//	write({'data': this.getCurrentUrl(), 'name': counter2 + 'link', 'mode': 'a'});
+				this.echo(this.getCurrentUrl());			
+				house.addr = this.getTitle().trim();			
+				house.link = this.getCurrentUrl().trim();			
 				});
 				
-		// этажность #descriptionBlockPart > div > div > table:nth-child(1) > tbody > tr:nth-child(4) > td.tab3-td-first 
+		// »нформаци€ о доме: этажность #descriptionBlockPart > div > div > table:nth-child(1) > tbody > tr:nth-child(4) > td.tab3-td-first  и т.д.
+		
 		casper.waitForSelector('table.tab3 > tbody > tr:nth-child(4)', function get_house_data() {		
-				house.floors = this.getHTML('table.tab3 > tbody > tr:nth-child(4)');
-		//		write({'data':  this.getHTML('table.tab3 > tbody > tr:nth-child(4)'), 'name': counter2 + 'floors' , 'mode': 'a' });				
+				
+				// #descriptionBlockPart > div > div > table:nth-child(1) > tbody > tr:nth-child(3) > td.tab3-td-first
+				try { 
+				house.buildDate = this.getHTML('table.tab3 > tbody > tr:nth-child(2) > td.tab3-td-first').replace("/n"," ").trim() + ":" + this.getHTML('table.tab3 > tbody > tr:nth-child(2) > td:nth-child(2)').replace("/n"," ").trim(); }
+				catch(err) {
+					this.echo('No BuildDate!');
+					}
+					
+				try { 
+				house.edition = his.getHTML('table.tab3 > tbody > tr:nth-child(3) > td.tab3-td-first').trim() .replace("/n"," ").trim() + ":" + this.getHTML('table.tab3 > tbody > tr:nth-child(3) > td:nth-child(2)').replace("/n"," ").trim(); }
+				catch(err) {
+					this.echo('No edition!');
+					}
+					
+				try { 				
+				house.floors = this.getHTML('table.tab3 > tbody > tr:nth-child(4) > td.tab3-td-first').trim() .replace("/n"," ").trim() + ":" + this.getHTML('table.tab3 > tbody > tr:nth-child(4) > td:nth-child(2)').replace("/n"," ").trim(); }
+				catch(err) {
+					this.echo('No floors!');
+					}
+					
+				
+				// #descriptionBlockPart > div > div > table:nth-child(1) > tbody > tr:nth-child(5) > td.tab3-td-first
+				try { 
+				house.totalMetres = this.getHTML('table.tab3 > tbody > tr:nth-child(5) > td.tab3-td-first').trim() .replace("/n"," ").trim() + ":" + this.getHTML('table.tab3 > tbody > tr:nth-child(5) > td:nth-child(2)').replace("/n"," ").trim(); }
+				catch(err) {
+					this.echo('No Metres!');
+					}
+					
+				
+				// #descriptionBlockPart > div > div > table:nth-child(1) > tbody > tr:nth-child(6) > td.tab3-td-first
+				try { 
+				house.flats =  this.getHTML('table.tab3 > tbody > tr:nth-child(6) > td.tab3-td-first').trim() .replace("/n"," ").trim() + ":" + this.getHTML('table.tab3 > tbody > tr:nth-child(6) > td:nth-child(2)').replace("/n"," ").trim(); }
+				catch(err) {
+					this.echo('No flats!');
+					}
+					
+				
+				// #descriptionBlockPart > div > div > table:nth-child(1) > tbody > tr:nth-child(7) > td.tab3-td-first
+				try { 
+				house.livingSpace = this.getHTML('table.tab3 > tbody > tr:nth-child(7) > td.tab3-td-first').trim() .replace("/n"," ").trim() + ":" + this.getHTML('table.tab3 > tbody > tr:nth-child(7) > td:nth-child(2)').replace("/n"," ").trim(); }
+				catch(err) {
+					this.echo('No living space!');
+					}
+					
+				try { 
+				house.nonLivingSpace = this.getHTML('table.tab3 > tbody > tr:nth-child(8) > td.tab3-td-first').trim() .replace("/n"," ").trim() + ":" + this.getHTML('table.tab3 > tbody > tr:nth-child(8) > td:nth-child(2)').replace("/n"," ").trim(); }
+				catch(err) {
+					this.echo('No workspace!');
+					}
+					
+				try { 
+				house.porch = this.getHTML('table.tab3 > tbody > tr:nth-child(9) > td.tab3-td-first').trim() .replace("/n"," ").trim() + ":" + this.getHTML('table.tab3 > tbody > tr:nth-child(9) > td:nth-child(2)').replace("/n"," ").trim(); }
+				catch(err) {
+					this.echo('No porches!');
+					}
+					
+				try { 
+				house.smallElevators = this.getHTML('table.tab3 > tbody > tr:nth-child(10) > td.tab3-td-first').trim() .replace("/n"," ").trim() + ":" + this.getHTML('table.tab3 > tbody > tr:nth-child(10) > td:nth-child(2)').replace("/n"," ").trim(); }
+				catch(err) {
+					this.echo('No small elevators!');
+					}
+					
+				try { 
+				house.bigElevators = this.getHTML('table.tab3 > tbody > tr:nth-child(11) > td.tab3-td-first').trim() .replace("/n"," ").trim() + ":" + this.getHTML('table.tab3 > tbody > tr:nth-child(11) > td:nth-child(2)').replace("/n"," ").trim(); }
+				catch(err) {
+					this.echo('No big elevators!');
+					}
+					
+				
+				// #descriptionBlockPart > div > div > table:nth-child(1) > tbody > tr:nth-child(12) > td.tab3-td-first
+				try { 
+				house.material = this.getHTML('table.tab3 > tbody > tr:nth-child(12) > td.tab3-td-first').trim() .replace("/n"," ").trim() + ":" + this.getHTML('table.tab3 > tbody > tr:nth-child(12) > td:nth-child(2)').replace("/n"," ").trim(); }
+				catch(err) {
+					this.echo('No Material!');
+					}
+					
+								
 				// ”правление
 				this.click('#sidebar-r > div > div > div.tub-box > a:nth-child(4)');
 			}, skip);
@@ -101,12 +172,17 @@ if (fs.exists(addr_path)) {
 		casper.then(function go_to_governor() {
 		//		write({'data':  this.getHTML()});	
 				this.echo(this.getCurrentUrl());
-		//		this.echo(this.getTitle());
+		
 			});
 	
 		casper.waitForSelector('div.p3 > div > a.h4', function get_governor_data() {
-				house.governor = this.getHTML('div.p3 > div > a.h4');
-		//		write( {'data': this.getHTML('div.p3 > div > a.h4'), 'name': counter2 + 'governor' , 'mode': 'a' } );
+				try {
+				house.governor = this.getHTML('div.p3 > div > a.h4').trim();		
+					}
+				catch(err) {
+					this.echo('No Governor!');
+					}
+					
 			}, skip);
 		
 		casper.then(function up_counter(){
