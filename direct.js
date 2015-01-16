@@ -13,15 +13,15 @@ var debugcounter = new Date();
 logpath = "logs/";
 
 var skip = function() {
-	console.log('Timeou reached, Not found!');
+	console.log('Timeout reached, Not found!');
 	};
 
 var write = function(args) {
- var filename = (typeof args.name === "undefined") ? logpath + "debug" + debugcounter.getTime() : logpath + args.name;
- var accessmode = (typeof args.mode === "undefined") ? "w" : args.mode;
- var data = (typeof args.data === "undefined") ? "w" : args.data;
+ var filename = (typeof args.name === "undefined") ?  "debug" + debugcounter.getTime() : args.name;
+ var accessmode = (typeof args.mode === "undefined") ? "a" : args.mode;
+ var data = (typeof args.data === "undefined") ? "NO DATA" : args.data;
  
- fs.write( filename + '.html',  data, {
+ fs.write( logpath + filename + '.html',  data, {
   opts: {
     mode: accessmode, 
     charset: 'UTF-8' 
@@ -43,23 +43,29 @@ var log = function(){
 	write({'data': this.getHTML()});
 }
 
-counter = 1; // precaution for testing - not to run all addrs
-counter2 = 1
+
+// precaution for testing - not to run all addrs
+counter = 1;
+max_num = 6;
+
+counter2 = 1;
 
 casper.start();
 
 if (fs.exists(addr_path)) {
 	var addr_file = fs.open(addr_path, { mode: 'r'});
-	while(!addr_file.atEnd() && counter <= 10)  { // precaution for testing - not to run all addrs
+	while(!addr_file.atEnd() && counter <= max_num)  { // precaution for testing - not to run all addrs
 		
 		console.log(counter);
 		
 		var link = addr_file.readLine(); 
+		var house = {};
 		
 		casper.thenOpen(link);
 		
 		casper.then(function search_addr() {
-				this.echo('Working on:   --------' + link);				
+				this.echo('Working on:   --------' + link);	
+				house = {};
 			});
 			
 		casper.waitForSelector('div.text a', function click_addr() {
@@ -70,34 +76,41 @@ if (fs.exists(addr_path)) {
 		casper.then(function choose_addr_type() {
 		//		write({'data':  this.getHTML()});	
 				this.echo(this.getCurrentUrl());
-				this.echo(this.getTitle());
+		//		this.echo(this.getTitle());
 				this.click('div[idcat="16"] > div > a');
 			});
 
 		casper.then(function got_to_house() {
 		//		write({'data':  this.getHTML()});	
 				this.echo(this.getCurrentUrl());
-				this.echo(this.getTitle());
+			//	this.echo(this.getTitle());
+				house.addr = this.getTitle();
+			//	write({'data': this.getTitle(), 'name': counter2 + 'addr', 'mode': 'a'});
+				house.link = this.getCurrentUrl();
+			//	write({'data': this.getCurrentUrl(), 'name': counter2 + 'link', 'mode': 'a'});
 				});
 				
 		// этажность #descriptionBlockPart > div > div > table:nth-child(1) > tbody > tr:nth-child(4) > td.tab3-td-first 
 		casper.waitForSelector('table.tab3 > tbody > tr:nth-child(4)', function get_house_data() {		
-				write({'data':  this.getHTML('table.tab3 > tbody > tr:nth-child(4)'), 'name': counter2, 'mode': 'a' });
+				house.floors = this.getHTML('table.tab3 > tbody > tr:nth-child(4)');
+		//		write({'data':  this.getHTML('table.tab3 > tbody > tr:nth-child(4)'), 'name': counter2 + 'floors' , 'mode': 'a' });				
 				// ”правление
 				this.click('#sidebar-r > div > div > div.tub-box > a:nth-child(4)');
 			}, skip);
 
 		casper.then(function go_to_governor() {
-				write({'data':  this.getHTML()});	
+		//		write({'data':  this.getHTML()});	
 				this.echo(this.getCurrentUrl());
-				this.echo(this.getTitle());
+		//		this.echo(this.getTitle());
 			});
 	
 		casper.waitForSelector('div.p3 > div > a.h4', function get_governor_data() {
-				write( {'data': this.getHTML('div.p3 > div > a.h4'), 'name': counter2 , 'mode': 'a' } );
+				house.governor = this.getHTML('div.p3 > div > a.h4');
+		//		write( {'data': this.getHTML('div.p3 > div > a.h4'), 'name': counter2 + 'governor' , 'mode': 'a' } );
 			}, skip);
 		
 		casper.then(function up_counter(){
+				write({'data': JSON.stringify(house), 'name': counter2 + 'all', 'mode': 'w'});
 				counter2++;
 			});
 		
