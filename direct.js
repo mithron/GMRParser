@@ -44,7 +44,7 @@ var log = function(){
 
 // precaution for testing - not to run all addrs
 counter = 1;
-max_num = 6;
+max_num = 10;
 
 counter2 = 1;
 
@@ -64,16 +64,16 @@ if (fs.exists(addr_path)) {
 		casper.then(function search_addr() {
 				this.echo('Working on:   --------' + link);	
 				house = {};
-			});
-			
-		casper.waitForSelector('div.text a', function click_addr() {
+				this.waitForSelector('div.text a', function click_addr() {
 		//		write({'data': this.getHTML()});	
 				this.click('div.text a');
 			}, skip);
 
+			});			
+		
 		casper.then(function choose_addr_type() {
 		//		write({'data':  this.getHTML()});	
-				this.echo(this.getCurrentUrl());
+		//		this.echo(this.getCurrentUrl());
 		//		this.echo(this.getTitle());
 				this.click('div[idcat="16"] > div > a');
 			});
@@ -82,12 +82,8 @@ if (fs.exists(addr_path)) {
 		//		write({'data':  this.getHTML()});	
 				this.echo(this.getCurrentUrl());			
 				house.addr = this.getTitle().trim();			
-				house.link = this.getCurrentUrl().trim();			
-				});
-				
-		// Информация о доме: этажность #descriptionBlockPart > div > div > table:nth-child(1) > tbody > tr:nth-child(4) > td.tab3-td-first  и т.д.
-		
-		casper.waitForSelector('table.tab3 > tbody > tr:nth-child(4)', function get_house_data() {		
+				house.link = this.getCurrentUrl().trim();
+				this.waitForSelector('table.tab3 > tbody > tr:nth-child(4)', function get_house_data() {		
 				
 				// #descriptionBlockPart > div > div > table:nth-child(1) > tbody > tr:nth-child(3) > td.tab3-td-first
 				try { 
@@ -169,21 +165,56 @@ if (fs.exists(addr_path)) {
 				this.click('#sidebar-r > div > div > div.tub-box > a:nth-child(4)');
 			}, skip);
 
-		casper.then(function go_to_governor() {
+				});
+			
+	
+		casper.then(function got_to_governor() {
 		//		write({'data':  this.getHTML()});	
 				this.echo(this.getCurrentUrl());
-		
-			});
-	
-		casper.waitForSelector('div.p3 > div > a.h4', function get_governor_data() {
+				this.waitForSelector('div.p3 > div > a.h4', function get_governor_data() {
 				try {
 				house.governor = this.getHTML('div.p3 > div > a.h4').trim();		
 					}
 				catch(err) {
 					this.echo('No Governor!');
 					}
-					
+				this.click("#sidebar-r > div > div > div.tub-box > a:nth-child(5)");	
 			}, skip);
+				
+			});
+			
+		casper.then(function got_to_ongoing() {
+				this.waitForSelector('#houseWorks > table > tbody > tr:nth-child(3) > td:nth-child(1)', function get_ongoing_data() {
+				try {
+				house.failedRepairs = this.getHTML('#houseWorks > table > tbody > tr:nth-child(3) > td:nth-child(1)').replace("/n"," ").trim() + ":" + this.getHTML('#houseWorks > table > tbody > tr:nth-child(3) > td.icon-elements').replace("/n"," ").trim();
+					}
+				catch(err) {
+					this.echo('No Failed Repairs!');
+					}
+				
+				try {
+				house.failedCommunal = this.getHTML('#houseWorks > table > tbody > tr:nth-child(4) > td:nth-child(1)').replace("/n"," ").trim() + ":" + this.getHTML('#houseWorks > table > tbody > tr:nth-child(4) > td.icon-elements').replace("/n"," ").trim();
+					}
+				catch(err) {
+					this.echo('No Failed Communals!');
+					}
+											
+				this.click("#sidebar-r > div > div > div.tub-box > a:nth-child(7)");	
+			}, skip);
+			});
+		
+		casper.then(function got_to_messages() {
+				this.waitForSelector('#combo1 > span', function get_ongoing_data() {
+				try {
+				house.messages = this.getHTML('#combo1 > span').match(/\(([0-9]+) /g).;
+					}
+				catch(err) {
+					this.echo('No Messages!');
+					}
+							
+			}, skip);
+		
+			});
 		
 		casper.then(function up_counter(){
 				write({'data': JSON.stringify(house), 'name': counter2 + 'all', 'mode': 'w'});
