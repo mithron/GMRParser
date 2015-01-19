@@ -12,6 +12,13 @@ var fs = require('fs');
 var debugcounter = new Date();
 logpath = "logs/";
 
+var log = function() {
+	this.echo(this.getCurrentUrl());
+	this.echo(this.getTitle());
+	write({'data': this.getHTML()});
+}
+
+
 var skip = function() {
 	console.log('Timeout reached, Not found!');
 	};
@@ -35,16 +42,11 @@ addr_path = 'prep_addr_uglyfied2.csv';
 addr = 'find=%EF%F0%EE%E5%E7%E4+%C7%E0%E3%EE%F0%FC%E5%E2%F1%EA%E8%E9+%E4.11';
 stat_link = 'http://gorod.mos.ru/?show=search&' + addr;
 
-var log = function(){
-	this.echo(this.getCurrentUrl());
-	this.echo(this.getTitle());
-	write({'data': this.getHTML()});
-}
 
 
 // precaution for testing - not to run all addrs
 counter = 1;
-max_num = 10;
+max_num = 5;
 
 counter2 = 1;
 
@@ -186,14 +188,14 @@ if (fs.exists(addr_path)) {
 		casper.then(function got_to_ongoing() {
 				this.waitForSelector('#houseWorks > table > tbody > tr:nth-child(3) > td:nth-child(1)', function get_ongoing_data() {
 				try {
-				house.failedRepairs = this.getHTML('#houseWorks > table > tbody > tr:nth-child(3) > td:nth-child(1)').replace("/n"," ").trim() + ":" + this.getHTML('#houseWorks > table > tbody > tr:nth-child(3) > td.icon-elements').replace("/n"," ").trim();
+				house.failedRepairs = this.getHTML('#houseWorks > table > tbody > tr:nth-child(3) > td:nth-child(1)').replace("/n"," ").trim() + this.getHTML('#houseWorks > table > tbody > tr:nth-child(3) > td.icon-elements').replace("/n"," ").trim();
 					}
 				catch(err) {
 					this.echo('No Failed Repairs!');
 					}
 				
 				try {
-				house.failedCommunal = this.getHTML('#houseWorks > table > tbody > tr:nth-child(4) > td:nth-child(1)').replace("/n"," ").trim() + ":" + this.getHTML('#houseWorks > table > tbody > tr:nth-child(4) > td.icon-elements').replace("/n"," ").trim();
+				house.failedCommunal = this.getHTML('#houseWorks > table > tbody > tr:nth-child(4) > td:nth-child(1)').replace("/n"," ").trim() + this.getHTML('#houseWorks > table > tbody > tr:nth-child(4) > td.icon-elements').replace("/n"," ").trim();
 					}
 				catch(err) {
 					this.echo('No Failed Communals!');
@@ -206,7 +208,7 @@ if (fs.exists(addr_path)) {
 		casper.then(function got_to_messages() {
 				this.waitForSelector('#combo1 > span', function get_ongoing_data() {
 				try {
-				house.messages = this.getHTML('#combo1 > span').match(/\(([0-9]+) /g).;
+				house.messages = this.getHTML('#combo1 > span').match(/\(([0-9]+) /g)[0].replace("(","").trim();
 					}
 				catch(err) {
 					this.echo('No Messages!');
