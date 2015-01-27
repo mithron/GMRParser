@@ -155,6 +155,7 @@ var get_governor_data = function() {
 				catch(err) {
 					this.echo('No Governor!');
 					}
+				// Go to next step
 				this.click("#sidebar-r > div > div > div.tub-box > a:nth-child(5)");	
 			}			
 
@@ -178,7 +179,7 @@ var get_ongoing_data = function() {
 				catch(err) {
 					this.echo('No Failed Communals!');
 					}
-											
+				// Go to next step							
 				this.click("#sidebar-r > div > div > div.tub-box > a:nth-child(7)");
 				
 			}
@@ -207,8 +208,22 @@ var up_counter = function() {
 				counter2++;
 			};			
 
+var is_test = function(counter, max_num) {
+	if (casper.cli.has("test"))	{
+		if (counter <= max_num) {
+			return true; }
+		else {
+			return false; }		
+		}
+	else {
+		return true;
+	};
+}
+
 			
-addr_path = 'prep_addr_uglyfied2.csv';
+//addr_path = 'prep_addr_uglyfied2.csv';
+
+addr_path = casper.cli.args[0];
 
 addr = 'find=%EF%F0%EE%E5%E7%E4+%C7%E0%E3%EE%F0%FC%E5%E2%F1%EA%E8%E9+%E4.11';
 stat_link = 'http://gorod.mos.ru/?show=search&' + addr;
@@ -218,14 +233,14 @@ stat_link = 'http://gorod.mos.ru/?show=search&' + addr;
 // precaution for testing - not to run all addrs
 counter = 1;
 max_num = 5;
-
 counter2 = 1;
 
 casper.start();
 
 if (fs.exists(addr_path)) {
-	var addr_file = fs.open(addr_path, { mode: 'r'});
-	while(!addr_file.atEnd() && counter <= max_num)  { // precaution for testing - not to run all addrs
+	var addr_file = fs.open(addr_path, { mode: 'r'});	
+
+	while(!addr_file.atEnd() && ( !casper.cli.has("test") || counter <= max_num ))  { // precaution for testing - not to run all addrs
 		
 		console.log(counter);
 		
