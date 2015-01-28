@@ -15,12 +15,14 @@ Working proto. In current state the script correctly takes addresses from suppli
 
 #Running
 In command promt:
-casperjs direct.js addr_file [--test]
+casperjs direct.js addr_file [--test] [--log="logdir/logprefix"]
 where: 
   addr_file - path to file containing gorod.mos.ru search links
   --test - for test run with first five links
+  --log - option for setting directory where data is logged and prefix for data files.
 
 Запускается путем вызова в коммандном режиме:
 casperjs direct.js addr_file [--test]
   addr_file - фаил со ссылками на gorod.mos.ru
   --test - задает запуск в режиме теста (только первые 5 ссылок)
+  --log -  задает директорию и префикс для файлов данных
