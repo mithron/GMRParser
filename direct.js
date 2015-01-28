@@ -226,6 +226,10 @@ counter2 = 1;
 
 casper.start();
 
+if (casper.cli.args.length === 0) {
+	casper.echo('No address file found!').exit();
+	}
+
 if (fs.exists(addr_path)) {
 	var addr_file = fs.open(addr_path, { mode: 'r'});	
 
@@ -257,9 +261,11 @@ if (fs.exists(addr_path)) {
 	}
 
 
-addr_file.close();
+	addr_file.close();
 
 }
-
+else {
+	casper.echo('Could not find address file!').exit();
+}
 
 casper.run();
