@@ -7,19 +7,17 @@ var casper = require('casper').create({
 		loadPlugins: false }
 });
 
-// from 289342ms to 180410ms 
-
 var fs = require('fs');
 
-var debugcounter = new Date();
-logpath = "logs/";
+//addr_path = 'prep_addr_uglyfied2.csv';
+//addr = 'find=%EF%F0%EE%E5%E7%E4+%C7%E0%E3%EE%F0%FC%E5%E2%F1%EA%E8%E9+%E4.11';
+//stat_link = 'http://gorod.mos.ru/?show=search&' + addr;
 
-var log = function() {
-	this.echo(this.getCurrentUrl());
-	this.echo(this.getTitle());
-	write({'data': this.getHTML()});
-}
+addr_path = (casper.cli.args[0] ) ? casper.cli.args[0] : 'prep_addr_uglyfied2.csv';
+logpath = (casper.cli.has("log")) ?  casper.cli.get("log") : "logs/";
+
 var write = function(args) {
+ var debugcounter = new Date();
  var filename = (typeof args.name === "undefined") ?  "debug" + debugcounter.getTime() : args.name;
  var accessmode = (typeof args.mode === "undefined") ? "a" : args.mode;
  var data = (typeof args.data === "undefined") ? "NO DATA" : args.data;
@@ -221,15 +219,6 @@ var is_test = function(counter, max_num) {
 }
 
 			
-//addr_path = 'prep_addr_uglyfied2.csv';
-
-addr_path = casper.cli.args[0];
-
-addr = 'find=%EF%F0%EE%E5%E7%E4+%C7%E0%E3%EE%F0%FC%E5%E2%F1%EA%E8%E9+%E4.11';
-stat_link = 'http://gorod.mos.ru/?show=search&' + addr;
-
-
-
 // precaution for testing - not to run all addrs
 counter = 1;
 max_num = 5;
